@@ -1,6 +1,14 @@
 package t45k.github.io.springAiTrial
 
-import kotlin.math.sqrt
+import org.jetbrains.kotlinx.multik.api.linalg.LinAlg
+import org.jetbrains.kotlinx.multik.api.linalg.dot
+import org.jetbrains.kotlinx.multik.api.linalg.norm
+import org.jetbrains.kotlinx.multik.api.mk
+import org.jetbrains.kotlinx.multik.api.ndarray
+import org.jetbrains.kotlinx.multik.api.zeros
+import org.jetbrains.kotlinx.multik.ndarray.data.D1
+import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
+import org.jetbrains.kotlinx.multik.ndarray.operations.stack
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.embedding.EmbeddingModel
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -42,10 +50,13 @@ class Controller(
 }
 
 private fun calcCosSimilarity(vector1: List<Double>, vector2: List<Double>): Double {
-    val a = vector1.zip(vector2) { a, b -> a * b }.sum()
-    val b = sqrt(vector1.sumOf { it * it }) * sqrt(vector2.sumOf { it * it })
-    return a / b
+    val ndarray1 = mk.ndarray(vector1)
+    val ndarray2 = mk.ndarray(vector2)
+
+    return (ndarray1 dot ndarray2) / (mk.linalg.norm(ndarray1) * mk.linalg.norm(ndarray2))
 }
+
+private fun LinAlg.norm(mat: MultiArray<Double, D1>): Double = norm(mk.stack(mat, mk.zeros(mat.size)))
 
 private const val sumMethod1 = """
     fun sum(values: List<Int>): Int {

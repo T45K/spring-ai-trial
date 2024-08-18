@@ -1,6 +1,7 @@
 package t45k.github.io.springAiTrial
 
 import kotlin.math.sqrt
+import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.embedding.EmbeddingModel
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -15,8 +16,11 @@ fun main(args: Array<String>) {
 }
 
 @RestController
-class Controller(private val embeddingModel: EmbeddingModel) {
-    @GetMapping("/ai")
+class Controller(
+    private val embeddingModel: EmbeddingModel,
+    private val chatModel: ChatModel,
+) {
+    @GetMapping("/embedding")
     fun call(): Any {
         val response = embeddingModel.embedForResponse(
             listOf(
@@ -29,6 +33,11 @@ class Controller(private val embeddingModel: EmbeddingModel) {
 
         val vectors = response.results.map { it.output }
         return vectors.map { vector -> vectors.map { calcCosSimilarity(vector, it) } }
+    }
+
+    @GetMapping("/chat")
+    fun callChat(): Any {
+        return chatModel.call("Please list up 10 famous Japanese food")
     }
 }
 

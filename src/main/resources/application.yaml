@@ -2,7 +2,6 @@ spring:
   ai:
     openai:
       api-key: ${SPRING_AI_OPENAI_API-KEY}
-      embedding:
+      chat:
         options:
-          model: text-embedding-3-small
-          dimensions: 512
+          model: ${SPRING_AI_OPENAI_API-CHAT_MODEL}
